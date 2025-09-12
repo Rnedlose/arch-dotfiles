@@ -1,0 +1,2 @@
+# Ignore large binaries
+.local/bin/obsidian
