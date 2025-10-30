@@ -1,16 +1,18 @@
 #!/bin/bash
 
-set -e  # Exit on any error
+set -e # Exit on any error
 
 echo "Starting Arch Linux package installation..."
 
-# Update system first
 echo "Updating system..."
 sudo pacman -Syu --noconfirm
 
-# Install packages from official repositories
-echo "Installing packages from official repositories..."
-sudo pacman -S --noconfirm \
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si --noconfirm
+cd ~
+
+yay -S --noconfirm \
     neovim \
     ripgrep \
     base-devel \
@@ -62,41 +64,7 @@ sudo pacman -S --noconfirm \
     vlc \
     file-roller \
     zathura \
-    obs-studio
-
-echo "Official packages installed successfully!"
-
-# Install yay AUR helper if not already installed
-if ! command -v yay &> /dev/null; then
-    echo "Installing yay AUR helper..."
-    cd /tmp
-    git clone https://aur.archlinux.org/yay.git
-    cd yay
-    makepkg -si --noconfirm
-    cd ~
-else
-    echo "yay is already installed, skipping..."
-fi
-
-# Install tmux plugin manager
-if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-    echo "Installing tmux plugin manager..."
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-else
-    echo "tmux plugin manager already installed, skipping..."
-fi
-
-# Install tmuxifier
-if [ ! -d "$HOME/.tmuxifier" ]; then
-    echo "Installing tmuxifier..."
-    git clone https://github.com/jimeh/tmuxifier.git ~/.tmuxifier
-else
-    echo "tmuxifier already installed, skipping..."
-fi
-
-# Install AUR packages
-echo "Installing packages from AUR..."
-yay -S --noconfirm \
+    obs-studio \
     hyprshot \
     hyprsunset \
     swayosd \
@@ -116,5 +84,17 @@ yay -S --noconfirm \
     typora \
     google-chrome
 
-echo "AUR packages installed successfully!"
 echo "All packages have been installed successfully!"
+
+git clone https://github.com/LazyVim/starter ~/.config/nvim
+
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+git clone https://github.com/Fausto-Korpsvart/Tokyo-Night-GTK-Theme.git ~/Tokyo-Night-GTK-Theme
+cd Tokyo-Night-GTK-Theme/themes
+./install.sh -c dark -t default --tweaks storm -l
+
+gsettings set org.gnome.desktop.interface gtk-theme 'Tokyonight-Dark-Storm'
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+
+sudo reboot now
